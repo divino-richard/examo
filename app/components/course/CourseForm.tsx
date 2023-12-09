@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Course } from '../types/course.types'
-import axiosInstance from '../config/app.config';
+import { Course } from '../../types/course.types'
+import axiosInstance from '../../config/app.config';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 

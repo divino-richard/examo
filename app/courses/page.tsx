@@ -1,5 +1,8 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { Suspense } from 'react'
+import CourseList from '../components/course/CourseList';
+
+export const revalidate = 3600
 
 function Courses() {
     return (
@@ -10,7 +13,9 @@ function Courses() {
                 </button>
             </Link>
 
-            
+            <Suspense fallback={<div>Loading...</div>}>
+                <CourseList />
+            </Suspense>
         </div>
     )
 }

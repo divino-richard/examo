@@ -27,3 +27,13 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({newCourse: createdCourse}, {status: 201});
 }
+
+export async function GET() {
+    const courses: Course[] = await prisma.courses.findMany({
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
+
+    return NextResponse.json({courses}, {status: 200});
+}

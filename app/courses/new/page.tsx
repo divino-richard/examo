@@ -1,4 +1,4 @@
-import CourseForm from '@/app/components/CourseForm'
+import CourseForm from '@/app/components/course/CourseForm'
 import Link from 'next/link'
 import React from 'react'
 
