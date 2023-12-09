@@ -34,6 +34,7 @@ function CourseForm(props: Props) {
                 router.push('/courses');
             })
             .catch((error) => {
+                console.log(error);
                 if (error instanceof AxiosError) {
                     const {response} = error;
                     const responseError =  response?.data.error;
