@@ -4,6 +4,7 @@ import axiosInstance from '@/app/config/app.config';
 import { Course } from '@/app/types/course.types';
 import React, { useState, useEffect } from 'react'
 import CourseCard from './CourseCard';
+import Link from 'next/link';
 
 function CourseList() {
     const [courses, setCourses] = useState<Course[] | null>(null);
@@ -18,9 +19,11 @@ function CourseList() {
     }, []);
 
     return (
-        <div className='flex flex-wrap'>
+        <div className='grid gap-5 grid-cols-4 mt-5'>
             {courses && courses.map((course: Course) => (
-                <CourseCard key={course.id} data={course}/>
+                <Link  key={course.id} href={`courses/${course.id}`}>
+                    <CourseCard data={course}/>
+                </Link>
             ))}
         </div>
     )

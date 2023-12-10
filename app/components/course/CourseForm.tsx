@@ -9,14 +9,15 @@ import { useRouter } from 'next/navigation';
 interface Props {
     formTitle: string;
     buttonLabel: string;
+    action?: 'ADD' | 'EDIT';
     defaultData?: Course;
 }
 
 function CourseForm(props: Props) {
-    const {formTitle, buttonLabel, defaultData} = props
+    const {formTitle, buttonLabel, action = "ADD", defaultData} = props
     const router = useRouter();
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+    const [title, setTitle] = useState(defaultData?.title??'');
+    const [description, setDescription] = useState(defaultData?.description??'');
     const [error, setError] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
@@ -24,27 +25,51 @@ function CourseForm(props: Props) {
         if (!title || !description) {
             return setError('Both fields are required');
         }
-        const newCourse = {
+        const courseData = {
             title,
             description,
         };
         setSubmitting(true);
-        axiosInstance.post('course', newCourse)
-            .then(() => {
-                router.push('/courses');
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error instanceof AxiosError) {
-                    const {response} = error;
-                    const responseError =  response?.data.error;
-                    return setError(responseError);
-                }
-                setError('Something went wrong. Please try again later');
-            })
-            .finally(() => {
-                setSubmitting(false);
-            });
+
+        switch(action) {
+            case 'ADD':
+                axiosInstance.post('course', courseData)
+                    .then(() => {
+                        router.push('/courses');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        if (error instanceof AxiosError) {
+                            const {response} = error;
+                            const responseError =  response?.data.error;
+                            return setError(responseError);
+                        }
+                        setError('Something went wrong. Please try again later');
+                    })
+                    .finally(() => {
+                        setSubmitting(false);
+                    });
+                break;
+            case "EDIT":
+                axiosInstance.put(`course/edit/${defaultData?.id}`, courseData)
+                    .then(() => {
+                        router.back();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        if (error instanceof AxiosError) {
+                            const {response} = error;
+                            const responseError =  response?.data.error;
+                            return setError(responseError);
+                        }
+                        setError('Something went wrong. Please try again later');
+                    })
+                    .finally(() => {
+                        setSubmitting(false);
+                    });
+                break;
+        }
+        
     } 
 
     return (
@@ -56,12 +81,14 @@ function CourseForm(props: Props) {
                     className='bg-zinc-100 p-2 border border-zinc-200 rounded-md text-sm outline-blue-700' 
                     type="text" 
                     placeholder='Name'
+                    value={title}
                     onChange={(event) => setTitle(event.target.value)}
                 />
                 <textarea 
                     className='bg-zinc-100 p-2 border border-zinc-200 rounded-md text-sm  outline-blue-700 resize-none'
                     rows={5} 
                     placeholder='Description'
+                    value={description}
                     onChange={(event) => setDescription(event.target.value)}
                 />
                 <button
