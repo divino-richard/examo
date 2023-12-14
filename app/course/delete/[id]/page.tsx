@@ -30,9 +30,9 @@ function Page({params}: Params) {
 
     const handleDelete = async () => {
         setDeleting(true);
-        axiosInstance.delete(`course/delete/${courseId}`)
+        axiosInstance.delete(`course/${courseId}`)
             .then(() => {
-                router.push('/courses');
+                router.push('/course');
             })
             .catch((error) => {
                 if (error instanceof AxiosError) {

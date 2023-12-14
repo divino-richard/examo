@@ -2,10 +2,10 @@ import CourseForm from '@/app/components/course/CourseForm'
 import Link from 'next/link'
 import React from 'react'
 
-function NewCourse() {
+function Page() {
     return (
         <div className='h-full'>
-            <Link href='/courses'>
+            <Link href='/course'>
                 <button>
                     Back
                 </button>
@@ -20,4 +20,4 @@ function NewCourse() {
     )
 }
 
-export default NewCourse
+export default Page

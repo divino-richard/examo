@@ -21,7 +21,7 @@ function CourseList() {
     return (
         <div className='grid gap-5 grid-cols-4 mt-5'>
             {courses && courses.map((course: Course) => (
-                <Link  key={course.id} href={`courses/${course.id}`}>
+                <Link  key={course.id} href={`course/${course.id}`}>
                     <CourseCard data={course}/>
                 </Link>
             ))}

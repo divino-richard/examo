@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
         }, {status: 400});
     }
 
-    const createdCourse = await prisma.courses.create({
+    const createdCourse = await prisma.course.create({
         data: {
             title: body.title,
             description: body.description,
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-    const courses: Course[] = await prisma.courses.findMany({
+    const courses: Course[] = await prisma.course.findMany({
         orderBy: {
             createdAt: 'desc'
         }

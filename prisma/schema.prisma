@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,10 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Courses {
-  id          String @id @default(cuid())
+model Course {
+  id          String   @id @default(cuid())
   title       String
   description String
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt()
+  updatedAt   DateTime @updatedAt
+  exams       Exam[]
+}
+
+enum ExamStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+model Exam {
+  id              String   @id @default(cuid())
+  courseId        String
+  course          Course   @relation(fields: [courseId], references: [id])
+  title           String
+  description     String
+  status          ExamStatus
+  durationMinutes Int
+  attemptLimit    Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

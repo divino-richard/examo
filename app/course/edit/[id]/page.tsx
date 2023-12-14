@@ -16,7 +16,7 @@ async function Page({params}:Params) {
 
     return (
         <div className='h-full'>
-            <Link href='/courses'>
+            <Link href={`/course/${course.id}`}>
                 <button>
                     Back
                 </button>

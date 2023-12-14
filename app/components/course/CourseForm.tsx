@@ -35,7 +35,7 @@ function CourseForm(props: Props) {
             case 'ADD':
                 axiosInstance.post('course', courseData)
                     .then(() => {
-                        router.push('/courses');
+                        router.push('/course');
                     })
                     .catch((error) => {
                         console.log(error);
@@ -51,7 +51,7 @@ function CourseForm(props: Props) {
                     });
                 break;
             case "EDIT":
-                axiosInstance.put(`course/edit/${defaultData?.id}`, courseData)
+                axiosInstance.put(`course/${defaultData?.id}`, courseData)
                     .then(() => {
                         router.back();
                     })

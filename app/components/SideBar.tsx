@@ -9,7 +9,7 @@ function SideBar() {
         },
         {
             name: 'Courses',
-            link: '/courses',
+            link: '/course',
         },
     ];
     return (

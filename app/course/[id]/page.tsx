@@ -5,22 +5,28 @@ import React from 'react'
 import { AiOutlineEdit, AiOutlineDelete, AiOutlinePlus, AiOutlineUnorderedList } from 'react-icons/ai'
 import { FiUsers } from 'react-icons/fi'
 
-async function Page ({ params }: { params: { id: string } }) {
+interface Params {
+    params: {
+        id: string;
+    }
+}
+
+async function Page ({ params }: Params) {
     const response = await axiosInstance.get(`course/${params.id}`);
     const course: Course = response.data.course; 
-    const buttonActionStyle = 'w-7 h-7 flex items-center justify-center hover:bg-blue-700 hover:text-white rounded-full'
-    
+    const buttonActionStyle = 'w-10 h-10 flex items-center justify-center hover:bg-blue-700 hover:text-white rounded-full'
+
     return (
         <div>
             <div className='flex items-center justify-between p-2 rounded-md bg-white shadow-md'>
                 <h1 className='text-base font-bold text-zinc-700'>{course.title}</h1>
                 <div className='flex items-center space-x-2'>
-                    <Link href={`/courses/edit/${params.id}`}>
+                    <Link href={`/course/edit/${params.id}`}>
                         <button className={buttonActionStyle} title='Edit Course'>
                             <AiOutlineEdit />
                         </button>
                     </Link>
-                    <Link href={`/courses/delete/${params.id}`}>
+                    <Link href={`/course/delete/${params.id}`}>
                         <button className={buttonActionStyle}  title='Delete Course'>
                             <AiOutlineDelete />
                         </button>
@@ -30,10 +36,12 @@ async function Page ({ params }: { params: { id: string } }) {
                     </button>
                 </div>
             </div>
-            <button className='flex items-center bg-blue-700 text-white py-2 px-5 rounded-md mt-5'>
-                <AiOutlinePlus />
-                <span className='ml-2 text-sm'>New Exam</span>
-            </button>
+            <Link href={`/exam/new/${params.id}`}>
+                <button className='flex items-center bg-blue-700 text-white py-2 px-5 rounded-md mt-5'>
+                    <AiOutlinePlus />
+                    <span className='ml-2 text-sm'>New Exam</span>
+                </button>
+            </Link>
             <div className='flex items-center text-lg mt-5 text-zinc-700'>
                 <AiOutlineUnorderedList />
                 <h1 className='ml-2 font-semibold'>Exams</h1>

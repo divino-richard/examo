@@ -6,7 +6,7 @@ import { AiOutlineUnorderedList, AiOutlinePlus } from 'react-icons/ai'
 function Page() {
     return (
         <div>
-            <Link href='/courses/new'>
+            <Link href='/course/new'>
                 <button className='flex items-center bg-blue-700 text-white text-sm px-5 py-2 rounded-md'>
                     <AiOutlinePlus />
                     <span className='ml-2 text-sm'>New Course</span>

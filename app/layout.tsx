@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className='flex bg-zinc-100'>
         <SideBar />
-        <main className='w-full p-5'>
+        <main className='w-full h-screen p-5 overflow-auto'>
           {children}
         </main>
       </body>
