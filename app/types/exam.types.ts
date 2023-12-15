@@ -1,17 +1,20 @@
 
-export type TestType = 'MC' | 'FB' | 'TF' | 'EW';
+export type ExamPartType = 'MC' | 'FB' | 'TF' | 'EW';
 
 export interface Question {
+    examPartId?: string;
     number: number;
     text: string;
 }
 
-export interface Test {
+export interface ExamPart {
+    id?: string,
     number: number;
     title: string;
     instruction: string;
-    type: TestType;
+    type: ExamPartType;
     questions: Question[];
+    createdAt?: Date;
 }
 
 export interface Exam {

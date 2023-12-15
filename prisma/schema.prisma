@@ -33,4 +33,35 @@ model Exam {
   attemptLimit    Int
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  examPart        ExamPart[]
+}
+
+enum ExamPartType {
+  MC
+  FB
+  TF
+  EW
+}
+
+model ExamPart {
+  id          String @id @default(cuid())
+  examId      String 
+  exam        Exam @relation(fields: [examId], references: [id])
+  number      Int
+  title       String
+  instruction String
+  type        ExamPartType
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
+  questions   Question[]
+}
+
+model Question {
+  id          String @id @default(cuid())
+  examPartId  String
+  examPart    ExamPart @relation(fields: [examPartId], references: [id])
+  number      Int
+  text        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

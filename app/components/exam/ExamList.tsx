@@ -46,7 +46,7 @@ function ExamList(props: Props) {
             {getExamError && <span className='text-red-500'>{getExamError}</span>}
             {gettingExams && <span>Loading...</span>}
             {exams && exams.map(exam => (
-                <Link key={exam.id}  href={`/exam/${exam.id}`}>
+                <Link key={exam.id}  href={`/exam/${courseId}/${exam.id}`}>
                     <ExamCard data={exam}/>
                 </Link>
             ))}

@@ -38,7 +38,6 @@ function CourseForm(props: Props) {
                         router.push('/course');
                     })
                     .catch((error) => {
-                        console.log(error);
                         if (error instanceof AxiosError) {
                             const {response} = error;
                             const responseError =  response?.data.error;
@@ -56,7 +55,6 @@ function CourseForm(props: Props) {
                         router.back();
                     })
                     .catch((error) => {
-                        console.log(error);
                         if (error instanceof AxiosError) {
                             const {response} = error;
                             const responseError =  response?.data.error;

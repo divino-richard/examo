@@ -3,27 +3,32 @@
 import React, { useEffect, useState } from 'react'
 import { AiOutlinePlus, AiOutlineSave, AiOutlineDelete } from 'react-icons/ai'
 import RomanNumerals from '@/app/constants/romanNumerals'
-import { Exam, Question, Test, TestType } from '@/app/types/exam.types'
+import { Exam, Question, ExamPart, ExamPartType } from '@/app/types/exam.types'
 import axiosInstance from '@/app/config/app.config'
 import { AxiosError } from 'axios'
+import ExamPartForm from '@/app/components/exam/ExamPartForm'
+import Modal from '@/app/components/Modal'
 
 interface Params {
     params: {
-        id: string;
+        courseId: string;
+        examId: string;
     }
 } 
 
 function Page({params}: Params) {
     const [exam, setExam] = useState<Exam | null>(null);
     const [error, setError] = useState('');
+    const [openModal, setOpenModal] = useState(false);
     const [gettingExam, setGettingExam] = useState(false);
 
     useEffect(() => {
         setGettingExam(true);
         const getExam = async () => {
             try {
-                const response = await axiosInstance.get(`exam/${params.id}`);
+                const response = await axiosInstance.get(`exam/${params.courseId}/${params.examId}`);
                 const exam: Exam = response.data.exam;
+                console.log(response)
                 setExam(exam);
             } catch (error) {
                 if (error instanceof AxiosError)  {
@@ -36,7 +41,7 @@ function Page({params}: Params) {
             }
         }
         getExam();
-    }, [params.id]);
+    }, [params]);
 
     // const [exam, setExam] = useState({
     //     tests: [{
@@ -109,72 +114,15 @@ function Page({params}: Params) {
     //     setExam({...exam, tests: exam.tests});
     // }
 
-    // const renderTest = (test: Test) => (
-    //     <div key={test.number} className='mt-5 border border-zinc-200 p-5 rounded-md hover:shadow-lg'>
-    //         <div className='flex items-center justify-between'>
-    //             <h1 className='font-bold'>Test {RomanNumerals[test.number-1]}</h1>
-    //             <div className='flex items-center space-x-2'>
-    //                 <select 
-    //                     className='bg-zinc-100 p-2 rounded-md border border-zinc-300 text-sm'
-    //                     defaultValue={test.type} 
-    //                     onChange={(event) => handleTestTypeChange(event.target.value as TestType, test.number)}>
-    //                     <option value="MC">Multiple Choice</option>
-    //                     <option value="FB">Fill in the Blank</option>
-    //                     <option value="TF">True or False</option>
-    //                     <option value="EW">Essay Writting</option>
-    //                 </select>
-    //                 <button 
-    //                     onChange={() => handleRemoveTest(test.number)}
-    //                     className='text-blue-700 p-2 rounded-full hover:bg-blue-700 hover:text-white'
-    //                 >
-    //                     <AiOutlineDelete 
-    //                         size={20} />
-    //                 </button>
-    //             </div>
-    //         </div>
-
-    //         <div className='mt-5'>
-    //             <h1 className='font-semibold'>Instruction: </h1>
-    //             <textarea 
-    //                 rows={2}
-    //                 placeholder={`Test ${RomanNumerals[test.number-1]} instruction...`}
-    //                 className='w-full p-2 rounded-md border border-zinc-200 resize-none'
-    //                 onChange={(event) => handleInstructionChange(event.target.value, test.number)}
-    //             />
-    //         </div>
-
-    //         {exam.tests[test.number-1].questions.map((question) => (
-    //             <div key={question.number} className='flex mt-5'>
-    //                 <span>{question.number}. </span>
-    //                 <textarea
-    //                     onChange={(event) => handleQuestionChange(
-    //                         event.target.value,
-    //                         test.number, 
-    //                         question.number
-    //                     )}
-    //                     className='w-full ml-2 p-2 border border-zinc-200 rounded-md resize-none'
-    //                     rows={1}
-    //                     placeholder={`Question number ${question.number}`}
-    //                 />
-    //             </div>
-    //         ))}
-            
-    //         <div className='flex justify-end'>
-    //             <button 
-    //                 onClick={() => handleAddQuestion(test.number)}
-    //                 className='flex items-center mt-5 p-2 rounded-md text-blue-700 hover:bg-blue-700 hover:text-white'
-    //             >
-    //                 <AiOutlinePlus />
-    //                 <span className='ml-2'>New Question</span>
-    //             </button>
-    //         </div>
-    //     </div>
-    // )
-
     return (
         <div className='bg-white p-5 rounded-md shadow-md'>
-            <div>
-                <h1>{}</h1>
+            <div className='flex items-center justify-between'>
+                <h1 className='font-bold text-lg text-zinc-500'>{exam?.title}</h1>
+                <div className='flext items-center space-x-5'>
+                    <span>Duration: {exam?.durationMinutes} mins</span>
+                    <span>Attempt Limit: {exam?.attemptLimit}</span>
+                    <span>{exam?.status?.toLowerCase()}</span>
+                </div>
             </div>
             {/* {exam.tests.map((test) => (
                 // renderTest(test)
@@ -184,11 +132,11 @@ function Page({params}: Params) {
                 <div className='w-full border-b border-blue-400'/>
                 <div className='w-1/4'>
                     <button 
-                        // onClick={handleAddTest}
+                        onClick={() => setOpenModal(true)}
                         className='mx-auto flex items-center px-2 text-blue-700'
                     >
                         <AiOutlinePlus />
-                        <span className='ml-2'>New Test</span>
+                        <span className='ml-2'>New Exam Part</span>
                     </button>
                 </div>
                 <div className='w-full border-b border-blue-400'/>
@@ -198,6 +146,13 @@ function Page({params}: Params) {
                 <AiOutlineSave />
                 <span className='ml-2'>Save Exam</span>
             </button>
+
+            <Modal
+                onClose={() => setOpenModal(false)}
+                open={openModal}
+            >
+                <ExamPartForm examId={params.examId}/>
+            </Modal>
         </div>
     )
 }
