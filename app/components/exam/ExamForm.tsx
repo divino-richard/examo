@@ -33,7 +33,6 @@ function ExamForm(props: Props) {
             const response = await axiosInstance.post('exam/', newExam);
             router.back();
         } catch (error) {
-            console.log(error);
             if (error instanceof AxiosError) {
                 const errorMessage: string = error.response?.data.error; 
                 return setSubmitError(errorMessage);

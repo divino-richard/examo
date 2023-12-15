@@ -1,7 +1,6 @@
 import { Course } from '@/app/types/course.types'
-import Link from 'next/link';
 import React from 'react'
-import { AiOutlineBook, AiFillEdit, AiFillDelete } from 'react-icons/ai'
+import { AiOutlineBook } from 'react-icons/ai'
 
 interface Props {
     data: Course;

@@ -1,3 +1,4 @@
+import ExamList from '@/app/components/exam/ExamList';
 import axiosInstance from '@/app/config/app.config'
 import { Course } from '@/app/types/course.types';
 import Link from 'next/link';
@@ -46,6 +47,7 @@ async function Page ({ params }: Params) {
                 <AiOutlineUnorderedList />
                 <h1 className='ml-2 font-semibold'>Exams</h1>
             </div>
+            <ExamList courseId={params.id}/>
         </div>
     )
 }

@@ -21,5 +21,6 @@ export interface Exam {
     description: string;
     durationMinutes: number;
     attemptLimit: number;
+    status?: String;
     createdAt?: Date;
 }
