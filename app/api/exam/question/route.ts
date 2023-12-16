@@ -20,14 +20,19 @@ export async function POST (request: NextRequest) {
         }, {status: 400});
     }
 
-    if (body.examPartId) {
-        const createdQuestion = await prisma.question.create({
-            data: {
-                examPartId: body.examPartId,
-                number: body.number,
-                text: body.text,
-            }
-        }); 
-        return NextResponse.json({createdQuestion}, {status: 201})
-    }
+    if (!body.examPartId) {
+        return NextResponse.json({
+            error: 'Exam part id is not provided'
+        }, {status: 400})
+    } 
+
+    const createdQuestion = await prisma.question.create({
+        data: {
+            examPartId: body.examPartId,
+            number: body.number,
+            text: body.text,
+        }
+    }); 
+
+    return NextResponse.json({createdQuestion}, {status: 201})
 }

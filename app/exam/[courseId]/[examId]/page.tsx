@@ -1,34 +1,48 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { AiOutlinePlus, AiOutlineSave, AiOutlineDelete } from 'react-icons/ai'
+import { AiOutlinePlus, AiOutlineDelete } from 'react-icons/ai'
 import RomanNumerals from '@/app/constants/romanNumerals'
-import { Exam, Question, ExamPart, ExamPartType } from '@/app/types/exam.types'
+import { Exam, ExamPart, ExamPartType, Question } from '@/app/types/exam.types'
 import axiosInstance from '@/app/config/app.config'
 import { AxiosError } from 'axios'
-import ExamPartForm from '@/app/components/exam/ExamPartForm'
-import Modal from '@/app/components/Modal'
+// import ExamPartForm from '@/app/components/exam/ExamPartForm'
+import { Popconfirm, Modal, Spin } from 'antd'
 
 interface Params {
     params: {
         courseId: string;
         examId: string;
     }
-} 
+}
 
 function Page({params}: Params) {
     const [exam, setExam] = useState<Exam | null>(null);
     const [error, setError] = useState('');
-    const [openModal, setOpenModal] = useState(false);
+    const [openExamPartModal, setOpenExamPartModal] = useState(false);
+    const [openQuestionModal, setOpenQuestionModal] = useState(false);
+    const [newExamPart, setNewExamPart] = useState<ExamPart>({
+        number: 0,
+        title: '',
+        type: 'MC',
+        instruction: '',
+    });
+    const [newQuestion, setNewQuestion] = useState<Question>({
+        number: 0,
+        text: ''
+    });
+    const [examPartError, setExamPartError] =  useState('');
     const [gettingExam, setGettingExam] = useState(false);
+    const [deletingExamPart, setDeletingExamPart] = useState(false);
+    const [addingExamPart, setAddingExamPart] = useState(false);
+    const [addingQuestion, setAddingQuestion] = useState(false);
 
     useEffect(() => {
-        setGettingExam(true);
         const getExam = async () => {
+            setGettingExam(true);
             try {
                 const response = await axiosInstance.get(`exam/${params.courseId}/${params.examId}`);
                 const exam: Exam = response.data.exam;
-                console.log(response)
                 setExam(exam);
             } catch (error) {
                 if (error instanceof AxiosError)  {
@@ -43,76 +57,74 @@ function Page({params}: Params) {
         getExam();
     }, [params]);
 
-    // const [exam, setExam] = useState({
-    //     tests: [{
-    //         number: 1,
-    //         instruction: '',
-    //         questions: [{
-    //             number: 1,
-    //             text: '',
-    //         }],
-    //         title: '',
-    //         type: 'MC'
-    //     }]
-    // });
+    const handleSaveExamPart = async () => {
+        if(!newExamPart.title) {
+            return setExamPartError('Title is required');
+        }
 
-    // console.log('Exam', exam);
+        if(!newExamPart.instruction) {
+            return setExamPartError('Instruction is required');
+        }
 
-    // const handleAddTest = () => {
-    //     const newTest: Test = {
-    //         number: exam.tests.length + 1,
-    //         instruction: '',
-    //         questions: [{
-    //             number: 1,
-    //             text: '',
-    //         }],
-    //         title: '',
-    //         type: 'MC',
-    //     } 
-    //     exam.tests.push(newTest);
-    //     setExam({...exam, tests: exam.tests});
-    // }
-
-    // const handleRemoveTest = (testNumber: number) => {
-    //     const filteredTests = exam.tests.filter(test => test.number !== testNumber);
-    //     setExam({...exam, tests: filteredTests});
-    // }
-
-    // const handleInstructionChange = (value: string, testNumber: number) => {
-    //     const targetTest = exam.tests[testNumber-1];
-    //     targetTest.instruction = value;
-    //     setExam({...exam, tests: exam.tests});
-    // }
-
-    // const handleAddQuestion = (testNumber: number) => {
-    //     const totalQuestions = exam.tests[testNumber-1].questions.length;
-    //     const lastQuestion = exam.tests[testNumber-1].questions[totalQuestions-1];
+        setAddingExamPart(true);
         
-    //     if (lastQuestion.text === '') {
-    //         return alert(`Please complete question number ${lastQuestion.number}`)
-    //     }
+        try {
+            const examPartResponse = await axiosInstance.post(`exam/exam-part/`, {
+                ...newExamPart, 
+                examId: params.examId
+            });
+            const createdExamPart: ExamPart = examPartResponse.data.createdExamPart;
+            setOpenExamPartModal(false);
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                const errorMessage = error.response?.data.error;
+                return setError(errorMessage);
+            } 
+            return setError('Something went wrong. Please try again later.')
+        } finally {
+            setAddingExamPart(false);
+        }
+    }
 
-    //     const newQuestion: Question = {
-    //         text: '',
-    //         number: exam.tests[testNumber-1].questions?.length + 1,
-    //     }
+    const handleDeleteExamPart = async (examPartId: string) => {
+        if (!examPartId) {
+            return
+        }
 
-    //     exam.tests[testNumber-1].questions.push(newQuestion);
-    //     setExam({...exam, tests: exam.tests})
-    // }
+        setDeletingExamPart(true);
+        
+        try {
+            const response = await axiosInstance.delete(`exam/exam-part/${examPartId}`);
+            console.log(response);
+        } catch (error) {
+            if(error instanceof AxiosError) {
+                const errorMessage = error.response?.data.error;
+                return setError(errorMessage);
+            }
+            return setError('Something went wrong. Please try again later.')
+        } finally {
+            setDeletingExamPart(false);
+        }
+    }
 
-    // const handleQuestionChange = (value: string, testNumber: number, questionNumber: number) => {
-    //     const targetTest = exam.tests[testNumber-1]
-    //     const targetQuestion = targetTest.questions[questionNumber-1];
-    //     targetQuestion.text = value; 
-    //     setExam({...exam, tests: exam.tests});
-    // }
-
-    // const handleTestTypeChange = (newTestType: TestType, testNumber: number) => {
-    //     const targetTest = exam.tests[testNumber - 1];
-    //     targetTest.type = newTestType;
-    //     setExam({...exam, tests: exam.tests});
-    // }
+    const handleAddQuestion = async () => {
+        if (!newQuestion.text) {
+            return
+        }
+        setAddingQuestion(true);
+        try {
+            const response = await axiosInstance.post(`exam/question/`, newQuestion);
+            setOpenQuestionModal(false);
+        } catch (error) {
+            if(error instanceof AxiosError) {
+                const errorMessage = error.response?.data.error;
+                return setError(errorMessage);
+            }
+            return setError('Something went wrong. Please try again later.')
+        } finally {
+            setAddingQuestion(false);
+        }
+    }
 
     return (
         <div className='bg-white p-5 rounded-md shadow-md'>
@@ -124,15 +136,73 @@ function Page({params}: Params) {
                     <span>{exam?.status?.toLowerCase()}</span>
                 </div>
             </div>
-            {/* {exam.tests.map((test) => (
-                // renderTest(test)
-            ))} */}
+
+            {exam?.examPart && exam.examPart.map(examPart => (
+                <div 
+                    key={examPart.id} 
+                    className='mt-5 border border-zinc-200 rounded-md p-2'
+                >
+                    <div className='flex items-center justify-between border-b border-zinc-200 pb-2'>
+                        <h1 className='font-semibold text-base text-zinc-500'>{examPart.title}</h1>
+                        <Popconfirm
+                            title="Delete the exam part"
+                            description="Are you sure to delete this exam part?"
+                            okText="Yes"
+                            cancelText="No"
+                            okType='danger'
+                            onConfirm={() => handleDeleteExamPart(examPart.id??'')}
+                        >
+                            <button className='hover:text-red-500'>
+                                <AiOutlineDelete 
+                                    size={16}
+                                />
+                            </button>
+                        </Popconfirm>
+                    </div>
+
+                    <div className='flex items-center space-x-2 text-base text-zinc-500 mt-2'>
+                        <h1 className='font-semibold'>Instruction:</h1>
+                        <p>{examPart.instruction}</p>
+                    </div>
+                    
+                    {examPart.questions && examPart.questions.map(question => (
+                        <div 
+                            key={question.id}
+                            className='flex items-center space-x-2 mt-2 text-zinc-500'    
+                        >
+                            <h1>{question.number}.</h1>
+                            <p>{question.text}</p>
+                        </div>
+                    ))}
+
+                    <button 
+                        className='flex items-center space-x-2 text-blue-700 border border-dashed border-blue-700 px-3 py-1 rounded-sm mt-2'
+                        onClick={() => {
+                            setNewQuestion({
+                                ...newQuestion, 
+                                examPartId: examPart.id,
+                                number: examPart.questions ? examPart.questions.length + 1 : 1,
+                            })
+                            setOpenQuestionModal(true);
+                        }}
+                    >
+                        <AiOutlinePlus size={16}/>
+                        <span>Question</span>
+                    </button>
+                </div>
+            ))}
 
             <div className='flex items-center space-x-2 mt-5'>
                 <div className='w-full border-b border-blue-400'/>
-                <div className='w-1/4'>
+                <div className='w-1/3'>
                     <button 
-                        onClick={() => setOpenModal(true)}
+                        onClick={() =>{
+                            setNewExamPart({
+                                ...newExamPart, 
+                                number: exam?.examPart ? exam?.examPart.length + 1 : 0
+                            });
+                            setOpenExamPartModal(true);
+                        }}
                         className='mx-auto flex items-center px-2 text-blue-700'
                     >
                         <AiOutlinePlus />
@@ -141,17 +211,81 @@ function Page({params}: Params) {
                 </div>
                 <div className='w-full border-b border-blue-400'/>
             </div>
+            
+            <Modal 
+                title="Add Exam Part" 
+                open={openExamPartModal} 
+                onOk={handleSaveExamPart} 
+                onCancel={() => {                    
+                    setOpenExamPartModal(false);
+                }}
+                okType='default'
+                okText={addingExamPart ? <Spin /> : 'Save'}
+                okButtonProps={{
+                    disabled: addingExamPart
+                }}
+            >
+                <div>
+                    {examPartError && <h1 className='text-red-500 mt-2 text-center'>{examPartError}</h1>}
+                    <input 
+                        className='p-2 rounded-md w-full border border-zinc-200 mt-2'
+                        type="text" 
+                        placeholder='title'
+                        onChange={(event) => setNewExamPart({
+                            ...newExamPart, 
+                            title: event.target.value
+                        })}
+                    />
+                        
+                    <select
+                        className='bg-zinc-100 p-2 rounded-md border border-zinc-300 text-sm mt-2'
+                        onChange={(event) => setNewExamPart({
+                            ...newExamPart, 
+                            type: event.target.value as ExamPartType
+                        })}
+                    >
+                        <option value="MC">Multiple Choice</option>
+                        <option value="FB">Fill in the Blank</option>
+                        <option value="TF">True or False</option>
+                        <option value="EW">Essay Writting</option>
+                    </select>
 
-            <button className='flex items-center mt-5 p-2 rounded-md bg-blue-700 text-white'>
-                <AiOutlineSave />
-                <span className='ml-2'>Save Exam</span>
-            </button>
+                    <div className='mt-2'>
+                        <h1 className='font-semibold'>Instruction: </h1>
+                        <textarea 
+                            rows={4}
+                            placeholder={'Exam part instruction...'}
+                            className='w-full p-2 rounded-md border border-zinc-200 resize-none'
+                            onChange={(event) => setNewExamPart({
+                                ...newExamPart, 
+                                instruction: event.target.value
+                            })}
+                        />
+                    </div>
+                </div>
+            </Modal>
 
             <Modal
-                onClose={() => setOpenModal(false)}
-                open={openModal}
-            >
-                <ExamPartForm examId={params.examId}/>
+                title='Add Question'
+                open={openQuestionModal}
+                onCancel={() => setOpenQuestionModal(false)}
+                onOk={handleAddQuestion}
+                okType='default'
+                okText={addingQuestion ? <Spin /> : 'Save'}
+                okButtonProps={{
+                    disabled: addingQuestion
+                }}
+            >   
+                <h1>Number {newQuestion.number}</h1>
+                <textarea 
+                    rows={4} 
+                    placeholder={`Question for number 1`}
+                    className='p-2 rounded-md w-full border border-zinc-200 resize-none'
+                    onChange={(event) => setNewQuestion({
+                        ...newQuestion, 
+                        text: event.target.value
+                    })}
+                />
             </Modal>
         </div>
     )

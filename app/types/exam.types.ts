@@ -2,9 +2,11 @@
 export type ExamPartType = 'MC' | 'FB' | 'TF' | 'EW';
 
 export interface Question {
+    id?: string; 
     examPartId?: string;
     number: number;
     text: string;
+    createdAt?: string;
 }
 
 export interface ExamPart {
@@ -13,7 +15,7 @@ export interface ExamPart {
     title: string;
     instruction: string;
     type: ExamPartType;
-    questions: Question[];
+    questions?: Question[];
     createdAt?: Date;
 }
 
@@ -25,5 +27,6 @@ export interface Exam {
     durationMinutes: number;
     attemptLimit: number;
     status?: String;
+    examPart?: ExamPart[];
     createdAt?: Date;
 }
