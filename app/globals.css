@@ -18,3 +18,7 @@
 
 body {
 }
+
+.ant-spin-dot-item {
+  background:  white !important;
+}

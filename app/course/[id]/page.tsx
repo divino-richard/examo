@@ -1,4 +1,5 @@
 import ExamList from '@/app/components/exam/ExamList';
+import NewExamButton from '@/app/components/exam/NewExamButton';
 import axiosInstance from '@/app/config/app.config'
 import { Course } from '@/app/types/course.types';
 import Link from 'next/link';
@@ -37,12 +38,14 @@ async function Page ({ params }: Params) {
                     </button>
                 </div>
             </div>
-            <Link href={`/exam/new/${params.id}`}>
+            {/* <Link href={`/exam/new/${params.id}`}>
                 <button className='flex items-center bg-blue-700 text-white py-2 px-5 rounded-md mt-5'>
                     <AiOutlinePlus />
                     <span className='ml-2 text-sm'>New Exam</span>
                 </button>
-            </Link>
+            </Link> */}
+            <NewExamButton courseId={params.id}/>
+            
             <div className='flex items-center text-lg mt-5 text-zinc-700'>
                 <AiOutlineUnorderedList />
                 <h1 className='ml-2 font-semibold'>Exams</h1>

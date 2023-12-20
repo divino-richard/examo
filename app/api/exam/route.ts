@@ -12,7 +12,7 @@ const createExamSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-    const body: Exam = await request.json(); 
+    const body = await request.json(); 
     
     const validation = createExamSchema.safeParse(body);
     if (!validation.success) {

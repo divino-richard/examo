@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { AiOutlinePlus, AiOutlineDelete } from 'react-icons/ai'
+import { AiOutlinePlus, AiOutlineDelete, AiOutlineClose } from 'react-icons/ai'
 import RomanNumerals from '@/app/constants/romanNumerals'
-import { Exam, ExamPart, ExamPartType, Question } from '@/app/types/exam.types'
+import { Choice, Exam, ExamPart, ExamPartType, Question } from '@/app/types/exam.types'
 import axiosInstance from '@/app/config/app.config'
 import { AxiosError } from 'axios'
 // import ExamPartForm from '@/app/components/exam/ExamPartForm'
@@ -14,6 +14,10 @@ interface Params {
         courseId: string;
         examId: string;
     }
+}
+
+interface QuestionWithChoices extends Question {
+    choices: Choice[];
 }
 
 function Page({params}: Params) {
@@ -27,9 +31,10 @@ function Page({params}: Params) {
         type: 'MC',
         instruction: '',
     });
-    const [newQuestion, setNewQuestion] = useState<Question>({
+    const [newQuestion, setNewQuestion] = useState<QuestionWithChoices>({
         number: 0,
-        text: ''
+        text: '',
+        choices: []
     });
     const [examPartError, setExamPartError] =  useState('');
     const [gettingExam, setGettingExam] = useState(false);
@@ -126,6 +131,19 @@ function Page({params}: Params) {
         }
     }
 
+    const handleAddChoice = () => {
+        const choice: Choice = {
+            letter: 'A',
+            text: 'Choice text',
+        }
+        newQuestion.choices.push(choice);
+        setNewQuestion({...newQuestion, choices: newQuestion.choices});
+    }
+
+    const handleChoiceTextChange = () => {
+        
+    }
+
     return (
         <div className='bg-white p-5 rounded-md shadow-md'>
             <div className='flex items-center justify-between'>
@@ -168,7 +186,7 @@ function Page({params}: Params) {
                     {examPart.questions && examPart.questions.map(question => (
                         <div 
                             key={question.id}
-                            className='flex items-center space-x-2 mt-2 text-zinc-500'    
+                            className='p-2 rounded-md flex items-center space-x-2 mt-2 text-zinc-500 hover:shadow-md hover:bg-zinc-100'    
                         >
                             <h1>{question.number}.</h1>
                             <p>{question.text}</p>
@@ -280,12 +298,36 @@ function Page({params}: Params) {
                 <textarea 
                     rows={4} 
                     placeholder={`Question for number 1`}
-                    className='p-2 rounded-md w-full border border-zinc-200 resize-none'
+                    className='p-2 rounded-md w-full border border-zinc-300 resize-none'
                     onChange={(event) => setNewQuestion({
                         ...newQuestion, 
                         text: event.target.value
                     })}
                 />
+
+                <div>
+                    {newQuestion.choices.map((choice: Choice) => (
+                        <div key={new Date().getMilliseconds()} className='flex items-center border border-zinc-300 mt-2 p-2 rounded-md'>
+                            <input 
+                                value={choice.text}
+                                className='w-full outline-none'
+                                type='text' 
+                                placeholder='Choice text'
+                            />
+                            <button className='p-1 cursor-pointer'>
+                                <AiOutlineClose className='text-zinc-500 hover:text-blue-700' size={16}/>
+                            </button>
+                        </div>
+                    ))}
+                    
+                    <button
+                        onClick={handleAddChoice}
+                        className='flex items-center space-x-2 text-blue-700 border border-dashed border-blue-700 px-3 py-1 rounded-sm mt-2'
+                    >
+                        <AiOutlinePlus size={16}/>
+                        <span>Choice</span>
+                    </button>
+                </div>
             </Modal>
         </div>
     )

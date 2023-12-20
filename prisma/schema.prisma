@@ -64,4 +64,15 @@ model Question {
   text        String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  choices     Choice[]
+}
+
+model Choice {
+  id          String @id @default(cuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id])
+  letter      String
+  text        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

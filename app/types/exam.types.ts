@@ -6,6 +6,7 @@ export interface Question {
     examPartId?: string;
     number: number;
     text: string;
+    choices?: Choice[];
     createdAt?: string;
 }
 
@@ -21,12 +22,21 @@ export interface ExamPart {
 
 export interface Exam {
     id?: string;
-    courseId: string;
+    courseId?: string;
     title: string;
     description: string;
     durationMinutes: number;
     attemptLimit: number;
-    status?: String;
+    status?: string;
     examPart?: ExamPart[];
     createdAt?: Date;
+}
+
+export interface Choice {
+    id?: string;
+    questionId?: string;
+    letter: string;
+    text: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
